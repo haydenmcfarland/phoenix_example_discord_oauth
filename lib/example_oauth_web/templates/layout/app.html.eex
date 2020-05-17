@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>ExampleOauth</title>
+    <link rel="stylesheet" href="<%= Routes.static_path(@conn, "/css/app.css") %>"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
+    <script defer type="text/javascript" src="<%= Routes.static_path(@conn, "/js/app.js") %>"></script>
+    <script>
+      <%= if @conn.assigns.user do %>
+        window.userToken = `<%= Phoenix.Token.sign(
+          ExampleOauthWeb.Endpoint,
+          "key",
+          @conn.assigns.user.id
+         ) %>`
+      <% end %>
+    </script>
+  </head>
+  <body>
+    <nav class="light-blue">
+      <div class="nav-wrapper container">
+        <a href ="/">
+          <img style="max-height:100%; padding: 0.8em"
+               src="<%= Routes.static_path(@conn, "/images/logo.png") %>">
+        </a>
+        <ul class="right">
+          <%= if @conn.assigns[:user] do %>
+            <li>
+            <%= link "Sign Out", to: Routes.auth_path(@conn, :signout) %>
+            </li>
+          <% else %>
+            <li>
+              <%= link "Sign in with Discord",
+                  to: Routes.auth_path(@conn, :request, "discord") %>
+            </li>
+          <% end %>
+          <li>
+            <a class="dark-toggle" href="#">
+              <i class="material-icons left">brightness_4</i>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    <div class="container">
+      <p class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></p>
+      <p class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></p>
+      <%= @inner_content %>
+    </div>
+  </body>
+</html>
