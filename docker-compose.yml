@@ -1,0 +1,24 @@
+version: "3.8"
+services:
+  db:
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_HOST_AUTH_METHOD: "trust"
+    image: "postgres:latest"
+    restart: always
+    volumes:
+      - db-data:/var/lib/postgresql/data/
+  web:
+    build: .
+    volumes:
+      - type: bind
+        source: .
+        target: /app
+    ports:
+      - "4000:4000"
+    depends_on:
+      - db
+    command:
+      - ./bin/run.sh
+volumes:
+  db-data:
